@@ -14,43 +14,42 @@
 
 </head>
 <body>
-    <div class="container m-5">
-        <header>
-            <div class="row d-flex flex-column">
+    <div class="m-5">
+        <header class="container p-0">
                 <p class="m-0 text-uppercase text-secondary"><small>Ingredientes</small></p>
-                <h1 class="main-title">Nombre del plato</h1>
-                    <div class="row">
-                        <button class="button-select">Seleccionar todo</button>
-                        <button class="button-unselect">Deseleccionar todo</button>
+                <h1 class="main-title card-subtitle font-weight-bold"></h1>
+                    <div class="row m-0 mt-3">
+                            <button type="button" class="btn btn-link p-0 button-select">Seleccionar todo</button>
+                            <span class="pl-1 pr-1">|</span>
+                            <button type="button" class="btn btn-link p-0 button-unselect">Deseleccionar todo</button>
                     </div>
-            </div>
         </header>
-        <main>
-            <ul class="list-ingredients">
-
-            </ul>
-            <div class="row">
-                <p>Items:</p>
-                <p class="number-items"></p>
-            </div>
-            <div class="row">
-                <p>Subtotal: </p>
-                <p class="subtotal"></p>
-            </div>
-            <div class="row">
-                <p>Gastos de envío: </p>
-                <p class="delivery"></p>
-            </div>
-            <div class="row">
-                <p>Total: </p>
-                <p class="total"></p>
-            </div>
-            <div class="row">
-                <button class="submit-purchase-button">
-                    <p>Comprar ingredientes:</p> 
-                    <p class="submit-purchase-amount"></p>
-                </button>
-            </div>
+        <main class="container">
+            <ul class="container list-group list-ingredients p-0"></ul>
+            <div class="container mt-5">
+                    <div class="row">
+                        <p class="small text-secondary">Items: </p>
+                        <p class="number-items small font-weight-bold pl-2"></p>
+                    </div>
+                    <div class="row d-flex justify-content-between">
+                        <p class="text-secondary">Subtotal: </p>
+                        <p class="subtotal"></p>
+                    </div>
+                    <div class="row d-flex justify-content-between">
+                        <p class="text-secondary">Gastos de envío: </p>
+                        <p class="delivery"></p>
+                    </div>
+                    <div class="row d-flex justify-content-between">
+                        <p class="font-weight-bold h4">Total: </p>
+                        <p class="total text-success font-weight-bold h3"></p>
+                    </div>
+                    <div class="row">
+                        <button class="submit-purchase-button btn btn-success btn-lg btn-block d-flex justify-content-center align-items-center mt-4">
+                            <p class="h3">Comprar ingredientes: </p> 
+                            <p class="submit-purchase-amount pl-2 h3"></p>
+                        </button>
+                    </div>
+            </div>    
         </main>
     </div>
         <!-- Optional JavaScript -->
