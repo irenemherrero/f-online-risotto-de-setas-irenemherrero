@@ -20,8 +20,8 @@
                 <p class="m-0 text-uppercase text-secondary"><small>Ingredientes</small></p>
                 <h1 class="main-title">Nombre del plato</h1>
                     <div class="row">
-                        <button>Seleccionar todo</button>
-                        <button>Deseleccionar todo</button>
+                        <button class="button-select">Seleccionar todo</button>
+                        <button class="button-unselect">Deseleccionar todo</button>
                     </div>
             </div>
         </header>
@@ -31,25 +31,25 @@
             </ul>
             <div class="row">
                 <p>Items:</p>
+                <p class="number-items"></p>
             </div>
             <div class="row">
                 <p>Subtotal</p>
-                <p>2,95€</p>
+                <p class="subtotal"></p>
             </div>
             <div class="row">
                 <p>Gastos de envío</p>
-                <p>7,00 €</p>
-            </div>
-            <div class="row">
-                <p>Gastos de envío</p>
-                <p>7,00 €</p>
+                <p class="delivery"></p>
             </div>
             <div class="row">
                 <p>Total</p>
-                <p>9,95 €</p>
+                <p class="total"></p>
             </div>
             <div class="row">
-                <button>Comprar ingredientes: 9,95 €</button>
+                <button class="submit-purchase-button">
+                    <p>Comprar ingredientes:</p> 
+                    <p class="submit-purchase-amount"></p>
+                </button>
             </div>
         </main>
     </div>
