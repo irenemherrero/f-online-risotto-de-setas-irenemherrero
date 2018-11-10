@@ -1,8 +1,6 @@
 'use strict';
 
 const nameRecipe = document.querySelector('.main-title');
-let recipeData;
-let ingredients;
 const listIngredients = document.querySelector('.list-ingredients');
 const buttonSelect = document.querySelector('.button-select');
 const buttonRemove = document.querySelector('.button-unselect');
@@ -12,72 +10,15 @@ const delivery = document.querySelector('.delivery');
 const total = document.querySelector('.total');
 const submitPurchaseButton = document.querySelector('.submit-purchase-button');
 const submitPurchaseAmount = document.querySelector('.submit-purchase-amount');
+let recipeData;
+let ingredients;
 let checkboxList;
 let inputQuantityList;
+let itemPriceList;
 let counterIngredients;
 let counterSubtotal;
-let counterDeliveryCharges = 7.00;
+let counterDeliveryCharges;
 let counterTotal = 0;
-
-//Print list of articles
-
-function printArticles(){
-    nameRecipe.innerHTML = recipeData.name;
-    ingredients.map((ingredient, index) => {
-            const newItem = document.createElement('li');
-            newItem.classList.add('listItem');
-            newItem.setAttribute('id', index);
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.setAttribute('name', 'ingredient');
-            checkbox.classList.add('checkbox-ingredient');
-            checkbox.addEventListener('change', handleCheckbox);
-            checkbox.setAttribute('id', index);
-
-            const counterContainer = document.createElement('div');
-            counterContainer.classList.add('counter-container');
-
-            const counterData = document.createElement('input');
-            counterData.type = 'number';
-            counterData.setAttribute('name', 'quantity-ingredient');
-            counterData.setAttribute('name', 'quantity-ingredient');
-            counterData.addEventListener('keyup', handleInputQuantity);
-            counterData.classList.add('counter-data');
-            counterData.value = ingredient.items;
-            counterData.setAttribute('id', index);
-
-            const ingredientDataContainer = document.createElement('div');
-            ingredientDataContainer.classList.add('ingredient-data-container');
-
-            const nameIngredient = document.createElement('p');
-            nameIngredient.innerHTML = ingredient.product;
-
-            const brandIngredient = document.createElement('p');
-            brandIngredient.innerHTML = ingredient.brand;
-
-            const quantityIngredient = document.createElement('p');
-            quantityIngredient.innerHTML = ingredient.quantity;
-
-            const priceContainer = document.createElement('div');
-            priceContainer.classList.add('price-container');
-
-            const priceIngredient = document.createElement('p');
-            priceIngredient.innerHTML = ingredient.price + '€';
-
-            priceContainer.appendChild(priceIngredient);
-            ingredientDataContainer.append(nameIngredient, brandIngredient, quantityIngredient);
-            counterContainer.appendChild(counterData);
-
-            newItem.append(checkbox, counterContainer, ingredientDataContainer, priceContainer);
-
-            listIngredients.appendChild(newItem);
-
-    });
-    checkboxList = document.querySelectorAll('.checkbox-ingredient');
-    inputQuantityList = document.querySelectorAll('.counter-data');
-    updatePurchaseData();
-}
 
 //Fetch data from Server
 
@@ -91,30 +32,63 @@ fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-seta
         printArticles();
     });
 
-//Function select all ingredients button
+//Print list of articles
 
-function addAllIngredients(){
-    for(let i = 0; i < checkboxList.length; i++){
-        checkboxList[i].checked = true;
-        ingredients[i].items = 1;
-        inputQuantityList[i].value = ingredients[i].items;
-    }
+function printArticles(){
+    nameRecipe.innerHTML = recipeData.name;
+    ingredients.map((ingredient, index) => {
+            //Creating lis
+            const newItem = document.createElement('li');
+            newItem.classList.add('listItem');
+            newItem.setAttribute('id', index);
+            //Creating checkbox
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = 'true';
+            checkbox.setAttribute('name', 'ingredient');
+            checkbox.classList.add('checkbox-ingredient');
+            checkbox.addEventListener('change', handleCheckbox);
+            checkbox.setAttribute('id', index);
+            //Creating input quantity
+            const counterData = document.createElement('input');
+            counterData.type = 'number';
+            counterData.setAttribute('name', 'quantity-ingredient');
+            counterData.setAttribute('name', 'quantity-ingredient');
+            counterData.addEventListener('keyup', handleInputQuantity);
+            counterData.addEventListener('change', handleInputQuantity);
+            counterData.classList.add('counter-data');
+            counterData.value = ingredient.items;
+            counterData.setAttribute('id', index);
+            //Creating product data
+            const ingredientDataContainer = document.createElement('div');
+            ingredientDataContainer.classList.add('ingredient-data-container');
+
+            const nameIngredient = document.createElement('p');
+            nameIngredient.innerHTML = ingredient.product;
+
+            const brandIngredient = document.createElement('p');
+            brandIngredient.innerHTML = ingredient.brand || '';
+
+            const quantityIngredient = document.createElement('p');
+            quantityIngredient.innerHTML = ingredient.quantity;
+            //Creating price
+            const priceContainer = document.createElement('div');
+            priceContainer.classList.add('price-container');
+
+            const priceIngredient = document.createElement('p');
+            priceContainer.classList.add('price-item');
+            priceIngredient.innerHTML = ingredient.price + '€';
+            //Putting elements inside anothers
+            priceContainer.appendChild(priceIngredient);
+            ingredientDataContainer.append(nameIngredient, brandIngredient, quantityIngredient);
+            newItem.append(checkbox, counterData, ingredientDataContainer, priceContainer);
+            listIngredients.appendChild(newItem);
+    });
+    checkboxList = document.querySelectorAll('.checkbox-ingredient');
+    inputQuantityList = document.querySelectorAll('.counter-data');
+    itemPriceList = document.querySelectorAll('.price-item');
     updatePurchaseData();
 }
-
-buttonSelect.addEventListener('click', addAllIngredients);
-
-//Function remove all ingredients button
-
-function removeAllIngredients(){
-    for(let i = 0; i < checkboxList.length; i++){
-        ingredients[i].items = 0;
-        inputQuantityList[i].value = ingredients[i].items;
-    }
-    updatePurchaseData();
-}
-
-buttonRemove.addEventListener('click', removeAllIngredients);
 
 //Update purchase data when you select ingredient(s)
 
@@ -123,17 +97,18 @@ function updatePurchaseData(){
     counterSubtotal = 0;
     counterTotal = 0;
     for(let i = 0; i < ingredients.length; i++){
-        if(inputQuantityList[i].value > 0){
-            checkboxList[i].checked = true;
-        } else {
-            checkboxList[i].checked = false;
-        }
-        const inputValue = parseInt(ingredients[i].items);
-        counterIngredients += inputValue;
-        const priceIngredient = ingredients[i].price * inputValue;
+        const numberItems = parseInt(ingredients[i].items);
+        counterIngredients += numberItems;
+        const priceIngredient = ingredients[i].price * numberItems;
+        itemPriceList[i].innerHTML = Math.round(priceIngredient*100)/100 + '€';
         counterSubtotal += priceIngredient;
-        counterTotal = counterSubtotal + counterDeliveryCharges;
     }
+    if(counterIngredients === 0){
+        counterDeliveryCharges = 0;
+    } else {
+        counterDeliveryCharges = 7;
+    }
+    counterTotal = counterSubtotal + counterDeliveryCharges;
     numberItems.innerHTML = counterIngredients;
     subtotal.innerHTML = Math.round(counterSubtotal*100)/100 + ' €';
     delivery.innerHTML = counterDeliveryCharges + ' €';
@@ -161,12 +136,32 @@ function handleCheckbox(e){
 function handleInputQuantity(e){
     const value = e.target.value;
     const id = e.target.id;
-    console.log(value);
-    console.log(id);
     if(value === ''){
         ingredients[id].items = 0;
+        checkboxList[id].checked = false;
     } else{
         ingredients[id].items = value;
+        checkboxList[id].checked = true;
+    }
+    updatePurchaseData();
+}
+
+//Function select all ingredients button
+
+function addAllIngredients(){
+    for(let i = 0; i < checkboxList.length; i++){
+        ingredients[i].items = 1;
+        inputQuantityList[i].value = ingredients[i].items;
+    }
+    updatePurchaseData();
+}
+
+//Function remove all ingredients button
+
+function removeAllIngredients(){
+    for(let i = 0; i < checkboxList.length; i++){
+        ingredients[i].items = 0;
+        inputQuantityList[i].value = ingredients[i].items;
     }
     updatePurchaseData();
 }
@@ -174,12 +169,13 @@ function handleInputQuantity(e){
 //Submit message
 
 function submitPurchase(){
-    console.log(counterTotal);
-    if(counterTotal > 7){
-        alert('Gracias por su compra');
+    if(counterTotal > 0){
+        console.log(ingredients);
     } else {
         alert('Seleccione algún producto'); 
     }
 }
 
+buttonSelect.addEventListener('click', addAllIngredients);
+buttonRemove.addEventListener('click', removeAllIngredients);
 submitPurchaseButton.addEventListener('click', submitPurchase);
